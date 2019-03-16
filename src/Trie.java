@@ -1,24 +1,50 @@
+import java.util.*;
+
 public class Trie {
-    static class TrieNode {
-        TrieNode[] children = new TrieNode[128]; //массив на 128 элементов
-        boolean fin; //является ли узел конечным
-    }
-
-    public static void insertString(TrieNode root, String s) {
-        TrieNode v = root;
-        for (char ch : s.toCharArray()) {
-            TrieNode next = v.children[ch];
-            if (next == null)
-                v.children[ch] = next = new TrieNode();
-            v = next;
+    //добавление строки в дерево
+    static void add(String text, Node curNode) {
+        if (curNode.getC() == (text.length() - 1)) curNode.fin = true;
+        else {
+            //новые узлы
+            if (!curNode.map.containsKey(text.charAt(curNode.getC() + 1))) {
+                Node child = new Node(text.charAt(curNode.getC() + 1), (curNode.getC() + 1));
+                curNode.map.put(text.charAt(curNode.getC() + 1), child);
+                Trie.add(text, child);
+            }
+            //проход по существующим узлам
+            else if (curNode.map.containsKey(text.charAt(curNode.getC() + 1))) {
+                Trie.add(text, curNode.map.get(text.charAt(curNode.getC() + 1)));
+            }
         }
-        v.fin = true;
+    }
+    public static void main(String[] args) {
+        Node root = new Node();
+        Trie.add("abcdefg", root);
+        Trie.add("aoplk", root);
+        Trie.add("booya", root);
+        System.out.println(root.map);
+    }
+}
+
+class Node {
+    Character key;
+    boolean fin;
+    int c;
+    Map<Character, Node> map = new HashMap<Character, Node>();
+
+    Node() {
+        this.key = null;
+        this.fin = false;
+        this.c = -1;
     }
 
-    public static void main(String[] args) {
-        TrieNode root = new TrieNode();
-        insertString(root, "hello");
-        insertString(root, "world");
-        insertString(root, "heck");
+    Node(Character key, int c) {
+        this.key = key;
+        this.fin = false;
+        this.c = c;
     }
+
+    int getC() {return this.c;}
+    int getKey() {return this.key;}
+    boolean isLeaf() {return this.fin;}
 }
