@@ -2,26 +2,60 @@ import java.util.*;
 
 public class Trie {
     //добавление строки в дерево
-    static void add(String text, Node curNode) {
-        if (curNode.getC() == (text.length() - 1)) curNode.fin = true;
+    public static void add(String text, Node curNode) {
+        if (curNode.getLvl() == text.length() - 1) curNode.fin = true;
         else {
-            //новые узлы
-            if (!curNode.map.containsKey(text.charAt(curNode.getC() + 1))) {
-                Node child = new Node(text.charAt(curNode.getC() + 1), (curNode.getC() + 1));
-                curNode.map.put(text.charAt(curNode.getC() + 1), child);
+            //создает новый объект, в хэшмэп текущего вставляется пара (следующий символ -> новый объект)
+            if (!curNode.map.containsKey(text.charAt(curNode.getLvl() + 1))) {
+                Node child = new Node(text.charAt(curNode.getLvl() + 1), (curNode.getLvl() + 1));
+                curNode.map.put(text.charAt(curNode.getLvl() + 1), child);
                 Trie.add(text, child);
             }
             //проход по существующим узлам
-            else if (curNode.map.containsKey(text.charAt(curNode.getC() + 1))) {
-                Trie.add(text, curNode.map.get(text.charAt(curNode.getC() + 1)));
+            else {
+                Trie.add(text, curNode.map.get(text.charAt(curNode.getLvl() + 1)));
             }
         }
     }
+
+    //поиск строки
+    public static boolean search(String text, Node curNode) {
+        //если узел последнего символа строки отмечен как конечный -> true
+        if (curNode.getLvl() == text.length() - 1) return curNode.isFin();
+
+        else if (curNode.map.containsKey(text.charAt(curNode.getLvl() + 1))) {
+            return Trie.search(text, curNode.map.get(text.charAt(curNode.getLvl() + 1)));
+        }
+        return false;
+    }
+
+    public static void searchByPrefix(String prefix, Node curNode) {
+        if (curNode.getLvl() < prefix.length() - 1) {
+            searchByPrefix(prefix, curNode.map.get((prefix.charAt(curNode.getLvl() + 1))));
+        }//TODO!!!
+    }
+
+    //удаление строки
+    public static void delete(String text, Node curNode) {
+        try {
+            if (curNode.getLvl() < text.length() - 1) {
+                Trie.delete(text, curNode.map.get(text.charAt(curNode.getLvl() + 1)));
+            } else curNode.fin = false;
+        }
+        catch (Exception e) {
+            System.out.println("Несуществующая строка");
+        }
+    }
+
     public static void main(String[] args) {
         Node root = new Node();
         Trie.add("abcdefg", root);
         Trie.add("aoplk", root);
         Trie.add("booya", root);
+        System.out.println(Trie.search("aopl", root));
+        System.out.println(Trie.search("aok", root));
+        Trie.delete("booya", root);
+        System.out.println(Trie.search("booya", root));
         System.out.println(root.map);
     }
 }
@@ -29,22 +63,22 @@ public class Trie {
 class Node {
     Character key;
     boolean fin;
-    int c;
+    int lvl;
     Map<Character, Node> map = new HashMap<Character, Node>();
 
     Node() {
         this.key = null;
         this.fin = false;
-        this.c = -1;
+        this.lvl = -1;
     }
 
     Node(Character key, int c) {
         this.key = key;
         this.fin = false;
-        this.c = c;
+        this.lvl = c;
     }
 
-    int getC() {return this.c;}
+    int getLvl() {return this.lvl;}
     int getKey() {return this.key;}
-    boolean isLeaf() {return this.fin;}
+    boolean isFin() {return this.fin;}
 }
