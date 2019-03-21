@@ -1,12 +1,12 @@
 import java.util.*;
 
 public class Trie {
-    //добавление строки в дерево
+    // добавление строки в дерево
     public static void add(String text, Node curNode) {
         if (curNode.getLvl() == text.length() - 1) curNode.setFin(true);
         else {
             int nextLvl = curNode.getLvl() + 1;
-            char nextSymbol = text.charAt(nextLvl);
+            String nextSymbol = Character.toString(text.charAt(nextLvl));
 
             // создание новых узлов
             if (!curNode.getChildren().containsKey(nextSymbol)) {
@@ -24,12 +24,14 @@ public class Trie {
         }
     }
 
+    // поиск строки в дереве
     public static boolean search(String text, Node curNode) {
         //если узел последнего символа строки отмечен как конечный -> true
         if (curNode.getLvl() == text.length() - 1) return curNode.isFin();
 
         // проход по существующим узлам
-        char nextSymbol = text.charAt(curNode.getLvl() + 1);
+        String nextSymbol = Character.toString(text.charAt(curNode.getLvl() + 1));
+
         if (curNode.getChildren().containsKey(nextSymbol)) {
             return Trie.search(text, curNode.getChildren().get(nextSymbol));
         }
@@ -37,16 +39,29 @@ public class Trie {
         return false;
     }
 
-    public static void searchByPrefix(String prefix, Node curNode) {
-        if (curNode.getLvl() < prefix.length() - 1) {
-            char nextSymbol = prefix.charAt(curNode.getLvl() + 1);
-            searchByPrefix(prefix, curNode.getChildren().get((nextSymbol)));
-        }
-        else {
+    // поиск строк по префиксу в дереве
+    public static void searchByPrefix(String prefix, Node curNode, ArrayList<String> str) {
+        try {
+            if (curNode.getLvl() < prefix.length() - 1) {
+                String nextSymbol = Character.toString(prefix.charAt(curNode.getLvl() + 1));
+                searchByPrefix(prefix, curNode.getChildren().get((nextSymbol)), str);
+            }
+            else {
+                linesInBranch(prefix, curNode, str);
+            }
+        } catch (Exception e) { throw new IllegalArgumentException(); }
+    }
 
+    private static void linesInBranch(String prefix, Node curNode, ArrayList<String> str) {
+        if (curNode.isFin()) {
+            str.add(prefix);
+        }
+        for (String k: curNode.getChildren().keySet()) {
+            linesInBranch(prefix.concat(k), curNode.getChildren().get(k), str);
         }
     }
 
+    // удаление строки из дерева
     public static void delete(String text, Node curNode) {
         if (curNode.getLvl() == text.length() - 1) {
             curNode.setFin(false);
@@ -54,7 +69,7 @@ public class Trie {
         }
         else {
             try {
-                char nextSymbol = text.charAt(curNode.getLvl() + 1);
+                String nextSymbol = Character.toString(text.charAt(curNode.getLvl() + 1));
                 delete(text, curNode.getChildren().get(nextSymbol));
             } catch (Exception e) { throw new IllegalArgumentException(); }
         }
@@ -68,7 +83,7 @@ public class Trie {
 
         // если у текущего узла есть дети
         if (!curNode.getChildren().isEmpty() && curNode.getLvl() < text.length() - 1) {
-            char nextSymbol = text.charAt(curNode.getLvl() + 1);
+            String nextSymbol = Character.toString(text.charAt(curNode.getLvl() + 1));
             curNode.getChildren().remove(nextSymbol);
         }
 
@@ -81,18 +96,18 @@ public class Trie {
 
     // узлы
     public static class Node {
-        private char key;
+        private String key;
         private boolean fin;
         private int lvl;
         private Node parent = null;
-        private HashMap<Character, Node> children = new HashMap<Character, Node>();
+        private HashMap<String, Node> children = new HashMap<String, Node>();
 
         Node() {
             this.fin = false;
             this.lvl = -1;
         }
 
-        Node(Character key, int c) {
+        Node(String key, int c) {
             //key = null
             this.key = key;
             this.fin = false;
@@ -102,7 +117,7 @@ public class Trie {
         public int getLvl() {
             return this.lvl;
         }
-        public int getKey() {
+        public String getKey() {
             return this.key;
         }
         public boolean isFin() {
@@ -111,12 +126,12 @@ public class Trie {
         public Node getParent() {
             return this.parent;
         }
-        public HashMap<Character, Node> getChildren() {
+        public HashMap<String, Node> getChildren() {
             return this.children;
         }
 
         //setters
-        public void setKey(Character key) {
+        public void setKey(String key) {
             this.key = key;
         }
         public void setLvl(int lvl) {

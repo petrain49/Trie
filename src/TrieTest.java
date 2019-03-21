@@ -1,9 +1,11 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 class TrieTest {
     @Test
-    void search() {
+    void addSearchDeleteTest() {
         Trie.Node root = new Trie.Node();
 
         Trie.add("app", root);
@@ -36,5 +38,21 @@ class TrieTest {
         assertFalse(Trie.search("applause", root));
         assertFalse(Trie.search("accord", root));
         assertFalse(Trie.search("b", root));
+    }
+
+    @Test
+    void searchByPrefixTest() {
+        Trie.Node root = new Trie.Node();
+        ArrayList<String> str = new ArrayList<String>();
+
+        Trie.add("boom", root);
+        Trie.add("abcв", root);
+        Trie.add("abcdrake", root);
+        Trie.add("abcdracula", root);
+        Trie.add("abcdenver", root);
+
+        Trie.searchByPrefix("abcd", root, str);
+
+        System.out.println(str);
     }
 }
