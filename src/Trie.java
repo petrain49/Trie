@@ -5,14 +5,14 @@ public class Trie {
     public static void add(String text, Node curNode) {
         if (curNode.getLvl() == text.length() - 1) curNode.setFin(true);
         else {
-            int nextLvl = curNode.getLvl() + 1;     // следующий уровень
-            char nextSymbol = text.charAt(nextLvl); // следующий символ
+            int nextLvl = curNode.getLvl() + 1;
+            char nextSymbol = text.charAt(nextLvl);
 
             // создание новых узлов
             if (!curNode.getChildren().containsKey(nextSymbol)) {
-                Node child = new Node(nextSymbol, nextLvl); // дочерний узел
+                Node child = new Node(nextSymbol, nextLvl);
+
                 child.setParent(curNode);
-                //System.out.println(child.getParent().getKey());
                 curNode.getChildren().put(nextSymbol, child);
                 Trie.add(text, child);
             }
@@ -29,7 +29,7 @@ public class Trie {
         if (curNode.getLvl() == text.length() - 1) return curNode.isFin();
 
         // проход по существующим узлам
-        char nextSymbol = text.charAt(curNode.getLvl() + 1); // следующий символ
+        char nextSymbol = text.charAt(curNode.getLvl() + 1);
         if (curNode.getChildren().containsKey(nextSymbol)) {
             return Trie.search(text, curNode.getChildren().get(nextSymbol));
         }
@@ -54,7 +54,7 @@ public class Trie {
         }
         else {
             try {
-                char nextSymbol = text.charAt(curNode.getLvl() + 1); // следующий символ
+                char nextSymbol = text.charAt(curNode.getLvl() + 1);
                 delete(text, curNode.getChildren().get(nextSymbol));
             } catch (Exception e) { throw new IllegalArgumentException(); }
         }
@@ -66,10 +66,12 @@ public class Trie {
                 || curNode.getChildren().size() > 0 && curNode.getLvl() == text.length() - 1
                 || curNode.isFin()) return;
 
+        // если у текущего узла есть дети
         if (!curNode.getChildren().isEmpty() && curNode.getLvl() < text.length() - 1) {
             char nextSymbol = text.charAt(curNode.getLvl() + 1);
             curNode.getChildren().remove(nextSymbol);
         }
+
         if (curNode.getLvl() > -1) {
             deleteNodes(text, curNode.getParent());
         }
