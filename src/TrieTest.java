@@ -1,7 +1,7 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.*;
 
 class TrieTest {
     @Test
@@ -46,13 +46,17 @@ class TrieTest {
         ArrayList<String> str = new ArrayList<String>();
 
         Trie.add("boom", root);
-        Trie.add("abcв", root);
+        Trie.add("abcd", root);
         Trie.add("abcdrake", root);
         Trie.add("abcdracula", root);
         Trie.add("abcdenver", root);
 
-        Trie.searchByPrefix("abcd", root, str);
+        ArrayList<String> expList = new ArrayList<String>(Arrays.asList("abcd", "abcdrake", "abcdracula", "abcdenver"));
+        ArrayList<String> list = Trie.searchByPrefix("abcd", root, str);
 
-        System.out.println(str);
+        Collections.sort(expList);
+        Collections.sort(list);
+
+        assertEquals(expList, list);
     }
 }

@@ -40,7 +40,7 @@ public class Trie {
     }
 
     // поиск строк по префиксу в дереве
-    public static void searchByPrefix(String prefix, Node curNode, ArrayList<String> str) {
+    public static ArrayList<String> searchByPrefix(String prefix, Node curNode, ArrayList<String> str) {
         try {
             if (curNode.getLvl() < prefix.length() - 1) {
                 String nextSymbol = Character.toString(prefix.charAt(curNode.getLvl() + 1));
@@ -50,6 +50,7 @@ public class Trie {
                 linesInBranch(prefix, curNode, str);
             }
         } catch (Exception e) { throw new IllegalArgumentException(); }
+        return str;
     }
 
     private static void linesInBranch(String prefix, Node curNode, ArrayList<String> str) {
