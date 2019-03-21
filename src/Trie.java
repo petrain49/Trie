@@ -109,7 +109,7 @@ public class Trie {
         }
 
         Node(String key, int c) {
-            //key = null
+            if (key == null) throw new IllegalArgumentException();
             this.key = key;
             this.fin = false;
             this.lvl = c;
@@ -141,6 +141,8 @@ public class Trie {
         public void setFin(boolean fin) {
             this.fin = fin;
         }
-        public void setParent(Node parent) { this.parent = parent; }
+        public void setParent(Node parent) {
+            this.parent = parent;
+        }
     }
 }
